@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="LifeOS: control sencillo de tus finanzas personales.">
+  <title>LifeOS · Finanzas personales</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23b45a1b'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='700' fill='white' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <noscript>
+    <p class="noscript">LifeOS necesita JavaScript para funcionar.</p>
+  </noscript>
+
+  <div class="app" id="app" hidden>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <span class="brand-name">LifeOS</span>
+      </div>
+      <nav class="nav" id="nav" aria-label="Secciones"></nav>
+    </aside>
+
+    <main class="main" id="main">
+      <header class="topbar">
+        <h1 id="view-title" tabindex="-1">Dashboard</h1>
+        <button type="button" class="btn btn-primary" data-action="new-movement" id="topbar-new" aria-label="Nuevo movimiento">
+          <span class="btn-icon" data-icon="plus"></span><span class="btn-label">Nuevo movimiento</span>
+        </button>
+      </header>
+      <div id="view" class="view"></div>
+    </main>
+  </div>
+
+  <!-- Primer acceso -->
+  <dialog id="onboarding" class="dialog dialog--wide" aria-labelledby="ob-title">
+    <form id="onboarding-form" novalidate>
+      <div class="dialog-body">
+        <div class="ob-hero">
+          <span class="brand-mark brand-mark--lg" aria-hidden="true">L</span>
+          <h2 id="ob-title">Te damos la bienvenida a LifeOS</h2>
+          <p class="muted">Configura tu perfil para empezar a controlar tu dinero. Todo se guarda solo en este navegador.</p>
+        </div>
+
+        <div class="field">
+          <label for="ob-name">Nombre</label>
+          <input id="ob-name" name="name" type="text" autocomplete="given-name" maxlength="60" required>
+          <p class="field-error" data-error-for="name"></p>
+        </div>
+        <div class="field">
+          <label for="ob-display">Nombre para mostrar <span class="optional">(opcional)</span></label>
+          <input id="ob-display" name="displayName" type="text" autocomplete="nickname" maxlength="40">
+          <p class="field-error" data-error-for="displayName"></p>
+        </div>
+
+        <fieldset class="field">
+          <legend>Moneda principal</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="currency" value="CRC" checked><span>Colones (₡)</span></label>
+            <label class="choice"><input type="radio" name="currency" value="USD"><span>Dólares (US$)</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>¿Cada cuánto recibes tu salario?</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="salaryFrequency" value="monthly" checked><span>Mensual</span></label>
+            <label class="choice"><input type="radio" name="salaryFrequency" value="biweekly"><span>Quincenal</span></label>
+          </div>
+        </fieldset>
+
+        <label class="check">
+          <input type="checkbox" name="seed" checked>
+          <span>Crear categorías de ejemplo (Gimnasio, Teléfono, Gasolina y Gastos diarios). Podrás editarlas o eliminarlas.</span>
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary btn-block">Comenzar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Movimiento -->
+  <dialog id="movement-dialog" class="dialog" aria-labelledby="mv-title">
+    <form id="movement-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="mv-title">Nuevo movimiento</h2>
+        <button type="button" class="icon-btn" data-action="close-dialog" aria-label="Cerrar"><span data-icon="x"></span></button>
+      </div>
+      <div class="dialog-body">
+        <fieldset class="segmented segmented--full" id="mv-kind">
+          <legend class="sr-only">Tipo de movimiento</legend>
+          <label><input type="radio" name="kind" value="expense"><span>Gasto</span></label>
+          <label><input type="radio" name="kind" value="income"><span>Ingreso</span></label>
+          <label><input type="radio" name="kind" value="saving"><span>Ahorro</span></label>
+        </fieldset>
+
+        <div class="field-row">
+          <div class="field field--grow">
+            <label for="mv-amount">Monto</label>
+            <input id="mv-amount" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0" required>
+            <p class="field-error" data-error-for="amount"></p>
+          </div>
+          <div class="field">
+            <label for="mv-currency">Moneda</label>
+            <select id="mv-currency" name="currency">
+              <option value="CRC">CRC ₡</option>
+              <option value="USD">USD $</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" id="mv-rate-field" hidden>
+          <label for="mv-rate">Tipo de cambio (₡ por US$1)</label>
+          <input id="mv-rate" name="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="Ej.: 505,25">
+          <p class="hint">Se guarda con este movimiento. Cambiarlo después en tu perfil no lo modifica.</p>
+          <p class="field-error" data-error-for="rate"></p>
+        </div>
+
+        <div class="field">
+          <label for="mv-date">Fecha</label>
+          <input id="mv-date" name="date" type="date" min="2000-01-01" max="2100-12-31" required>
+          <p class="field-error" data-error-for="date"></p>
+        </div>
+
+        <div class="field" id="mv-category-field">
+          <label for="mv-category">Categoría</label>
+          <select id="mv-category" name="categoryId"></select>
+          <p class="field-error" data-error-for="categoryId"></p>
+        </div>
+
+        <div id="mv-income-fields">
+          <div class="field">
+            <label for="mv-income-type">Tipo de ingreso</label>
+            <select id="mv-income-type" name="incomeType">
+              <option value="salary">Salario</option>
+              <option value="other">Otro ingreso</option>
+            </select>
+          </div>
+          <fieldset class="field">
+            <legend>Período al que corresponde</legend>
+            <div class="field-row">
+              <select id="mv-period-month" name="periodMonth" aria-label="Mes del período"></select>
+              <input id="mv-period-year" name="periodYear" type="number" min="2000" max="2100" aria-label="Año del período" class="input-year">
+              <select id="mv-period-half" name="periodHalf" aria-label="Quincena del período">
+                <option value="1">1.ª quincena</option>
+                <option value="2">2.ª quincena</option>
+              </select>
+            </div>
+            <p class="hint" id="mv-period-hint"></p>
+            <p class="field-error" data-error-for="period"></p>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label for="mv-description">Descripción <span class="optional">(opcional)</span></label>
+          <input id="mv-description" name="description" type="text" maxlength="140" autocomplete="off">
+          <p class="field-error" data-error-for="description"></p>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" data-action="close-dialog">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Categoría -->
+  <dialog id="category-dialog" class="dialog" aria-labelledby="cat-title">
+    <form id="category-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="cat-title">Nueva categoría</h2>
+        <button type="button" class="icon-btn" data-action="close-dialog" aria-label="Cerrar"><span data-icon="x"></span></button>
+      </div>
+      <div class="dialog-body">
+        <div class="field">
+          <label for="cat-name">Nombre</label>
+          <input id="cat-name" name="name" type="text" maxlength="40" autocomplete="off" required>
+          <p class="field-error" data-error-for="name"></p>
+        </div>
+        <fieldset class="field">
+          <legend>Ícono</legend>
+          <div class="icon-picker" id="cat-icons"></div>
+          <p class="field-error" data-error-for="icon"></p>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Tipo de gasto</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="type" value="fixed"><span>Fijo<small>Se repite con monto similar</small></span></label>
+            <label class="choice"><input type="radio" name="type" value="variable"><span>Variable<small>Cambia según el consumo</small></span></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="cat-budget">Presupuesto mensual <span class="optional">(opcional)</span></label>
+          <input id="cat-budget" name="budget" type="text" inputmode="decimal" autocomplete="off" placeholder="Sin presupuesto">
+          <p class="hint" id="cat-budget-hint"></p>
+          <p class="field-error" data-error-for="budget"></p>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" data-action="close-dialog">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Eliminar categoría con movimientos -->
+  <dialog id="delcat-dialog" class="dialog" aria-labelledby="delcat-title">
+    <form id="delcat-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="delcat-title">Eliminar categoría</h2>
+        <button type="button" class="icon-btn" data-action="close-dialog" aria-label="Cerrar"><span data-icon="x"></span></button>
+      </div>
+      <div class="dialog-body">
+        <p id="delcat-message"></p>
+        <fieldset class="field">
+          <legend>¿Qué hacemos con esos gastos?</legend>
+          <label class="check" id="delcat-reassign-option">
+            <input type="radio" name="mode" value="reassign">
+            <span>Pasarlos a otra categoría</span>
+          </label>
+          <div class="field delcat-target">
+            <label class="sr-only" for="delcat-target">Categoría de destino</label>
+            <select id="delcat-target" name="target"></select>
+          </div>
+          <label class="check">
+            <input type="radio" name="mode" value="none">
+            <span>Conservarlos como «Sin categoría»</span>
+          </label>
+        </fieldset>
+        <p class="hint">Tus gastos no se borran: el historial financiero se mantiene.</p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" data-action="close-dialog">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Eliminar categoría</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmación / aviso -->
+  <dialog id="confirm-dialog" class="dialog dialog--sm" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <form method="dialog">
+      <div class="dialog-body">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-message"></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-ghost" value="cancel" id="confirm-cancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" value="confirm" id="confirm-ok">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script src="js/money.js"></script>
+  <script src="js/dates.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
