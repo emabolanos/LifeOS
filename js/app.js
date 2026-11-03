@@ -5,7 +5,7 @@
 (function (L) {
   'use strict';
 
-  const { Money, Dates, Model, Storage } = L;
+  const { Money, Dates, Model, Storage, Icons } = L;
 
   /* ------------------------------------------------------------------ */
   /* Utilidades                                                          */
@@ -46,7 +46,15 @@
     alert: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
     lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   };
+  Object.assign(ICONS, Icons.PATHS);
   const icon = (name, cls = '') => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+
+  /** Ícono de una categoría (o de "Sin categoría" si c es null). */
+  function catIcon(c) {
+    if (!c) return icon('box');
+    const key = Icons.resolve(c.icon);
+    return key ? icon(key) : `<span class="emoji">${esc(c.icon)}</span>`;
+  }
 
   function hydrateIcons(root = document) {
     $$('[data-icon]', root).forEach((el) => { el.innerHTML = icon(el.dataset.icon); });
@@ -241,7 +249,7 @@
   function movementBadge(m) {
     if (m.kind === 'expense') {
       const c = Model.categoryById(state.data, m.categoryId);
-      return `<span class="mv-badge mv-badge--expense" aria-hidden="true">${c ? esc(c.icon) : icon('expense')}</span>`;
+      return `<span class="mv-badge mv-badge--expense" aria-hidden="true">${catIcon(c)}</span>`;
     }
     return `<span class="mv-badge mv-badge--${m.kind}" aria-hidden="true">${icon(m.kind)}</span>`;
   }
@@ -333,7 +341,7 @@
         const w = maxCat ? Math.max(2, Math.round((row.total / maxCat) * 100)) : 0;
         return `
           <li class="dist-row">
-            <span class="dist-icon" aria-hidden="true">${c ? esc(c.icon) : '•'}</span>
+            <span class="dist-icon" aria-hidden="true">${catIcon(c)}</span>
             <div class="dist-body">
               <div class="dist-top"><span class="dist-name">${esc(c ? c.name : 'Sin categoría')}</span><span class="dist-amt">${fmt(row.total)}</span></div>
               <div class="bar ${i === 0 ? 'bar--top' : ''}" role="presentation"><span style="width:${w}%"></span></div>
@@ -351,14 +359,14 @@
         const limit = Model.budgetForPeriod(c, p.mode, profile());
         const spent = spentByCat.get(c.id) || 0;
         if (limit === null) {
-          return `<li class="budget-row"><div class="dist-top"><span>${esc(c.icon)} ${esc(c.name)}</span></div><p class="small muted">Configura el tipo de cambio en Mi perfil para comparar este presupuesto.</p></li>`;
+          return `<li class="budget-row"><div class="dist-top"><span class="dist-name"><span class="inline-icon" aria-hidden="true">${catIcon(c)}</span>${esc(c.name)}</span></div><p class="small muted">Configura el tipo de cambio en Mi perfil para comparar este presupuesto.</p></li>`;
         }
         const pct = Math.round((spent / limit) * 100);
         const over = spent > limit;
         const state_ = over ? 'over' : pct >= 85 ? 'near' : 'ok';
         return `
           <li class="budget-row">
-            <div class="dist-top"><span class="dist-name">${esc(c.icon)} ${esc(c.name)}</span><span class="dist-amt">${fmt(spent)} <span class="muted">de ${fmt(limit)}</span></span></div>
+            <div class="dist-top"><span class="dist-name"><span class="inline-icon" aria-hidden="true">${catIcon(c)}</span>${esc(c.name)}</span><span class="dist-amt">${fmt(spent)} <span class="muted">de ${fmt(limit)}</span></span></div>
             <div class="bar bar--${state_}" role="progressbar" aria-label="Presupuesto de ${esc(c.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(pct, 100)}"><span style="width:${Math.min(100, pct)}%"></span></div>
             <p class="small budget-status budget-status--${state_}">${over ? `Excedido por ${fmt(spent - limit)}` : `Quedan ${fmt(limit - spent)} · ${pct}% usado`}</p>
           </li>`;
@@ -423,7 +431,7 @@
         <label class="sr-only" for="f-cat">Categoría</label>
         <select id="f-cat">
           <option value="all">Todas las categorías</option>
-          ${cats.map((c) => `<option value="${esc(c.id)}" ${f.category === c.id ? 'selected' : ''}>${esc(c.icon)} ${esc(c.name)}</option>`).join('')}
+          ${cats.map((c) => `<option value="${esc(c.id)}" ${f.category === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
           <option value="none" ${f.category === 'none' ? 'selected' : ''}>Sin categoría</option>
         </select>
       </div>
@@ -511,12 +519,12 @@
           const sp = spent.get(c.id) || 0;
           const budgetLine = c.budget
             ? `<p class="small">Presupuesto: <strong>${fmt(c.budget.amount, c.budget.currency)}</strong> al mes</p>
-               ${limit !== null ? `<div class="bar bar--${sp > limit ? 'over' : 'ok'}" role="presentation"><span style="width:${Math.min(100, Math.round((sp / limit) * 100))}%"></span></div>` : ''}`
+               ${limit !== null ? `<div class="bar bar--${sp > limit ? 'over' : sp >= limit * 0.85 ? 'near' : 'ok'}" role="presentation"><span style="width:${Math.min(100, Math.round((sp / limit) * 100))}%"></span></div>` : ''}`
             : '<p class="small muted">Sin presupuesto</p>';
           return `
             <li class="card cat-card">
               <div class="cat-top">
-                <span class="cat-icon" aria-hidden="true">${esc(c.icon)}</span>
+                <span class="cat-icon" aria-hidden="true">${catIcon(c)}</span>
                 <div class="cat-info">
                   <h3>${esc(c.name)}</h3>
                   <span class="tag">${c.type === 'fixed' ? 'Fijo' : 'Variable'}</span>
@@ -663,7 +671,7 @@
 
     const cats = state.data.categories;
     $('#mv-category').innerHTML = `<option value="">Sin categoría</option>${
-      cats.map((c) => `<option value="${esc(c.id)}">${esc(c.icon)} ${esc(c.name)}</option>`).join('')}`;
+      cats.map((c) => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}`;
     $('#mv-period-month').innerHTML = Dates.MONTHS.map((n, i) => `<option value="${i + 1}">${Dates.cap(n)}</option>`).join('');
 
     const k = movement ? movement.kind : (kind || 'expense');
@@ -731,12 +739,11 @@
     showErrors(form, null);
     editingCategoryId = cat ? cat.id : null;
     $('#cat-title').textContent = cat ? 'Editar categoría' : 'Nueva categoría';
-    const current = cat ? cat.icon : Model.ICONS[0];
-    const icons = Model.ICONS.includes(current) ? Model.ICONS : [current, ...Model.ICONS];
-    $('#cat-icons').innerHTML = icons.map((ic, i) => `
-      <label class="icon-option">
-        <input type="radio" name="icon" value="${esc(ic)}" ${ic === current ? 'checked' : ''} aria-label="Ícono ${i + 1}">
-        <span aria-hidden="true">${esc(ic)}</span>
+    const current = (cat && Icons.resolve(cat.icon)) || (cat ? Icons.CATEGORY[0].key : 'banknote');
+    $('#cat-icons').innerHTML = Icons.CATEGORY.map(({ key, label }) => `
+      <label class="icon-option" title="${esc(label)}">
+        <input type="radio" name="icon" value="${key}" ${key === current ? 'checked' : ''} aria-label="${esc(label)}">
+        <span aria-hidden="true">${icon(key)}</span>
       </label>`).join('');
     $('#cat-name').value = cat ? cat.name : '';
     $(`#category-form input[name="type"][value="${cat ? cat.type : 'variable'}"]`).checked = true;
@@ -782,7 +789,7 @@
     deletingCategoryId = id;
     const others = state.data.categories.filter((c) => c.id !== id);
     $('#delcat-message').textContent = `«${cat.name}» tiene ${used} gasto(s) registrados.`;
-    $('#delcat-target').innerHTML = others.map((c) => `<option value="${esc(c.id)}">${esc(c.icon)} ${esc(c.name)}</option>`).join('');
+    $('#delcat-target').innerHTML = others.map((c) => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
     const reassign = $('#delcat-form input[value="reassign"]');
     reassign.disabled = !others.length;
     $('#delcat-target').disabled = !others.length;

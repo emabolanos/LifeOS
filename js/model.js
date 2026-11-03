@@ -7,7 +7,7 @@
  *   version: 1,
  *   profile: { name, displayName, currency: 'CRC'|'USD',
  *              salaryFrequency: 'monthly'|'biweekly', exchangeRate: int|null } | null,
- *   categories: [{ id, name, icon, type: 'fixed'|'variable',
+ *   categories: [{ id, name, icon (clave de icons.js), type: 'fixed'|'variable',
  *                  budget: { amount: int, currency } | null }],
  *   movements: [{ id, kind: 'income'|'expense'|'saving', amount: int, currency,
  *                 rate: int|null, date: 'AAAA-MM-DD', description,
@@ -29,8 +29,6 @@
   const FREQUENCIES = ['monthly', 'biweekly'];
   const CATEGORY_TYPES = ['fixed', 'variable'];
   const INCOME_TYPES = ['salary', 'other'];
-  const ICONS = ['🏋️', '📱', '⛽', '🛒', '🏠', '💡', '💧', '🌐', '🚌', '🚗', '🍽️', '☕',
-    '🎓', '🩺', '💊', '👕', '🎬', '🎮', '✈️', '🐾', '🎁', '💳', '🧾', '📦'];
 
   const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
   const isCurrency = (c) => Object.prototype.hasOwnProperty.call(Money.CURRENCIES, c);
@@ -51,10 +49,10 @@
 
   function defaultCategories() {
     return [
-      { name: 'Gimnasio', icon: '🏋️', type: 'fixed' },
-      { name: 'Teléfono', icon: '📱', type: 'fixed' },
-      { name: 'Gasolina', icon: '⛽', type: 'variable' },
-      { name: 'Gastos diarios', icon: '🛒', type: 'variable' },
+      { name: 'Gimnasio', icon: 'dumbbell', type: 'fixed' },
+      { name: 'Teléfono', icon: 'phone', type: 'fixed' },
+      { name: 'Gasolina', icon: 'fuel', type: 'variable' },
+      { name: 'Gastos diarios', icon: 'cart', type: 'variable' },
     ].map((c) => ({ id: uid(), ...c, budget: null }));
   }
 
@@ -385,7 +383,7 @@
   }
 
   L.Model = {
-    SCHEMA_VERSION, KINDS, ICONS, uid, createEmpty, defaultCategories, migrate, validate,
+    SCHEMA_VERSION, KINDS, uid, createEmpty, defaultCategories, migrate, validate,
     buildProfile, buildCategory, countCategoryUsage, deleteCategory, categoryById,
     buildMovement, upsertMovement, deleteMovement, sortMovements,
     valueInMain, movementsInPeriod, summarize, budgetForPeriod,
