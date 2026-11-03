@@ -4,12 +4,12 @@
 
 :root {
   color-scheme: light;
-  /* Fondo blanco con luz de cielo celeste solo en la parte superior */
+  /* Fondo blanco puro; el celeste queda en acentos y burbujas */
   --page: #ffffff;
-  --sky: linear-gradient(180deg, #eef7fe 0px, #f8fcff 130px, #ffffff 260px);
+  --sky: #ffffff;
   --glow-1: rgb(255 255 255 / 0.95);
-  --glow-2: rgb(150 210 250 / 0.08);
-  --glow-3: rgb(150 230 205 / 0.08);
+  --glow-2: rgb(255 255 255 / 0);
+  --glow-3: rgb(255 255 255 / 0);
   --bubble: rgb(90 170 235 / 0.28);
   --bubble-in: rgb(205 232 252 / 0.22);
 
@@ -55,7 +55,7 @@
   --toast-bg: #13283b;
   --toast-text: #ffffff;
   --glass: rgb(255 255 255 / 0.88);
-  --glass-page: rgb(255 255 255 / 0.84);
+  --glass-page: rgb(255 255 255 / 0.9);
   --glass-border: rgb(150 195 230 / 0.35);
 
   --radius: 18px;
