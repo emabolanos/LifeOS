@@ -7,7 +7,8 @@
  *   version: 1,
  *   profile: { name, displayName, currency: 'CRC'|'USD',
  *              salaryFrequency: 'monthly'|'biweekly', exchangeRate: int|null,
- *              theme?: 'light'|'dark'|'auto' (sin valor = 'light') } | null,
+ *              theme?: 'light'|'dark'|'auto' (sin valor = 'light'),
+ *              accent?: 'blue'|'green' (sin valor = 'blue') } | null,
  *   categories: [{ id, name, icon (clave de icons.js), type: 'fixed'|'variable',
  *                  budget: { amount: int, currency } | null }],
  *   movements: [{ id, kind: 'income'|'expense'|'saving', amount: int, currency,
@@ -29,6 +30,7 @@
   const KINDS = ['income', 'expense', 'saving'];
   const FREQUENCIES = ['monthly', 'biweekly'];
   const THEMES = ['light', 'dark', 'auto'];
+  const ACCENTS = ['blue', 'green'];
   const CATEGORY_TYPES = ['fixed', 'variable'];
   const INCOME_TYPES = ['salary', 'other'];
 
@@ -103,6 +105,7 @@
         if (!FREQUENCIES.includes(p.salaryFrequency)) err('La frecuencia salarial no es válida.');
         if (p.exchangeRate !== null && !isPositiveInt(p.exchangeRate)) err('El tipo de cambio del perfil no es válido.');
         if (p.theme !== undefined && !THEMES.includes(p.theme)) err('El tema del perfil no es válido.');
+        if (p.accent !== undefined && !ACCENTS.includes(p.accent)) err('El color del perfil no es válido.');
       }
     }
 
@@ -168,7 +171,12 @@
     return profile && THEMES.includes(profile.theme) ? profile.theme : 'light';
   }
 
-  /** draft: { name, displayName, currency, salaryFrequency, rateText?, theme? } */
+  /** Color de acento; los perfiles sin color usan "blue" (celeste). */
+  function accentOf(profile) {
+    return profile && ACCENTS.includes(profile.accent) ? profile.accent : 'blue';
+  }
+
+  /** draft: { name, displayName, currency, salaryFrequency, rateText?, theme?, accent? } */
   function buildProfile(draft, existing) {
     const errors = {};
     const name = clean(draft.name);
@@ -188,11 +196,13 @@
 
     const theme = draft.theme !== undefined ? draft.theme : themeOf(existing);
     if (!THEMES.includes(theme)) errors.theme = 'Elige un tema.';
+    const accent = draft.accent !== undefined ? draft.accent : accentOf(existing);
+    if (!ACCENTS.includes(accent)) errors.accent = 'Elige un color.';
 
     if (Object.keys(errors).length) return { errors };
     return {
       errors: null,
-      profile: { name, displayName, currency: draft.currency, salaryFrequency: draft.salaryFrequency, exchangeRate, theme },
+      profile: { name, displayName, currency: draft.currency, salaryFrequency: draft.salaryFrequency, exchangeRate, theme, accent },
     };
   }
 
@@ -394,7 +404,7 @@
   }
 
   L.Model = {
-    SCHEMA_VERSION, KINDS, THEMES, themeOf, uid, createEmpty, defaultCategories, migrate, validate,
+    SCHEMA_VERSION, KINDS, THEMES, themeOf, ACCENTS, accentOf, uid, createEmpty, defaultCategories, migrate, validate,
     buildProfile, buildCategory, countCategoryUsage, deleteCategory, categoryById,
     buildMovement, upsertMovement, deleteMovement, sortMovements,
     valueInMain, movementsInPeriod, summarize, budgetForPeriod,

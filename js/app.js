@@ -174,17 +174,22 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Tema: claro, oscuro o automático (según el sistema)                  */
+  /* Apariencia: tema (claro/oscuro/automático) y color (celeste/verde)  */
   /* ------------------------------------------------------------------ */
 
   const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  const BAR_COLOR = { blue: '#0f3256', green: '#123a2b' }; // barra del sistema en oscuro
 
   function applyTheme() {
-    const theme = state.data && state.data.profile ? Model.themeOf(state.data.profile) : 'light';
+    const p = state.data && state.data.profile;
+    const theme = p ? Model.themeOf(p) : 'light';
+    const accent = p ? Model.accentOf(p) : 'blue';
     const dark = theme === 'dark' || (theme === 'auto' && !!darkQuery && darkQuery.matches);
-    document.documentElement.dataset.mode = dark ? 'dark' : 'light';
+    const root = document.documentElement;
+    root.dataset.mode = dark ? 'dark' : 'light';
+    root.dataset.accent = accent;
     const meta = $('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#0f3256' : '#ffffff');
+    if (meta) meta.setAttribute('content', dark ? BAR_COLOR[accent] : '#ffffff');
   }
 
   if (darkQuery) {
@@ -192,11 +197,17 @@
     else if (darkQuery.addListener) darkQuery.addListener(applyTheme); // Safari antiguo
   }
 
-  function saveTheme(theme) {
-    if (!Model.THEMES.includes(theme) || Model.themeOf(profile()) === theme) return;
-    const labels = { light: 'Tema claro', dark: 'Tema oscuro', auto: 'Tema automático' };
-    if (commit((d) => { d.profile = { ...d.profile, theme }; }, `${labels[theme]} activado`)) {
-      const radio = $(`#theme-options input[value="${theme}"]`);
+  const APPEARANCE = {
+    theme: { values: Model.THEMES, current: Model.themeOf, labels: { light: 'Tema claro', dark: 'Tema oscuro', auto: 'Tema automático' } },
+    accent: { values: Model.ACCENTS, current: Model.accentOf, labels: { blue: 'Color celeste', green: 'Color verde' } },
+  };
+
+  /** Guarda tema o color al instante y deja el foco en la opción elegida. */
+  function saveAppearance(field, value) {
+    const cfg = APPEARANCE[field];
+    if (!cfg || !cfg.values.includes(value) || cfg.current(profile()) === value) return;
+    if (commit((d) => { d.profile = { ...d.profile, [field]: value }; }, `${cfg.labels[value]} activado`)) {
+      const radio = $(`#appearance input[name="${field}"][value="${value}"]`);
       if (radio) radio.focus();
     }
   }
@@ -619,20 +630,17 @@
         </section>
 
         <div class="profile-side">
-        <section class="card" aria-labelledby="h-theme">
+        <section class="card" aria-labelledby="h-theme" id="appearance">
           <h3 id="h-theme">Apariencia</h3>
-          <fieldset class="field theme-options" id="theme-options">
-            <legend class="sr-only">Tema de la app</legend>
-            ${[
-              ['light', 'Claro', 'Fondo blanco con acentos celestes'],
-              ['dark', 'Oscuro', 'Cielo nocturno, ideal de noche'],
-              ['auto', 'Automático', 'Sigue el modo claro u oscuro de tu dispositivo'],
-            ].map(([value, label, desc]) => `
-            <label class="choice theme-choice">
-              <input type="radio" name="theme" value="${value}" ${Model.themeOf(p) === value ? 'checked' : ''}>
-              <span><i class="swatch swatch--${value}" aria-hidden="true"></i><span><strong>${label}</strong><small>${desc}</small></span></span>
-            </label>`).join('')}
-          </fieldset>
+          ${appearanceGroup('theme', 'Tema', Model.themeOf(p), [
+            ['light', 'Claro', 'Fondo blanco con acentos de color'],
+            ['dark', 'Oscuro', 'Cielo nocturno, ideal de noche'],
+            ['auto', 'Automático', 'Sigue el modo claro u oscuro de tu dispositivo'],
+          ])}
+          ${appearanceGroup('accent', 'Color', Model.accentOf(p), [
+            ['blue', 'Celeste', 'Azul cielo brillante'],
+            ['green', 'Verde', 'Verde bosque, color del dinero'],
+          ])}
         </section>
 
         <section class="card" aria-labelledby="h-data">
@@ -650,6 +658,19 @@
         </section>
         </div>
       </div>`;
+  }
+
+  /** Grupo de opciones de Apariencia (radios con muestra de color). */
+  function appearanceGroup(name, title, current, options) {
+    return `
+      <fieldset class="field theme-options appearance-group">
+        <legend>${title}</legend>
+        ${options.map(([value, label, desc]) => `
+        <label class="choice theme-choice">
+          <input type="radio" name="${name}" value="${value}" ${current === value ? 'checked' : ''}>
+          <span><i class="swatch swatch--${value}" aria-hidden="true"></i><span><strong>${label}</strong><small>${desc}</small></span></span>
+        </label>`).join('')}
+      </fieldset>`;
   }
 
   function saveProfile(form) {
@@ -984,7 +1005,7 @@
       if (e.target.id === 'f-q') { state.filters.q = e.target.value; updateMovementList(); }
     });
     document.addEventListener('change', (e) => {
-      if (e.target.name === 'theme' && e.target.closest('#theme-options')) { saveTheme(e.target.value); return; }
+      if (e.target.closest('#appearance') && APPEARANCE[e.target.name]) { saveAppearance(e.target.name, e.target.value); return; }
       if (e.target.id === 'f-kind') { state.filters.kind = e.target.value; updateMovementList(); }
       if (e.target.id === 'f-cat') {
         state.filters.category = e.target.value;

@@ -40,7 +40,7 @@ fonts/              Source Sans 3 (licencia SIL OFL 1.1, ver fonts/OFL.txt)
 ```
 
 Diseño: estilo "Aero" (cielo celeste a blanco, tarjetas de vidrio y brillos suaves),
-tema claro por defecto y opción de oscuro o automático en Mi perfil → Apariencia, barras translúcidas
+tema claro por defecto y opción de oscuro o automático, y color celeste o verde, en Mi perfil → Apariencia, barras translúcidas
 en el celular, título grande que se compacta al desplazarse y tamaños de letra
 en `rem`. En iPhone se respeta el tamaño de texto elegido en Ajustes.
 

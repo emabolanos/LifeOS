@@ -185,6 +185,18 @@ test('tema por defecto claro y se conserva al guardar el perfil', () => {
   assert.equal(saved.theme, 'dark');
   assert.deepEqual(Model.validate({ ...d, profile: saved }), []);
 });
+test('color por defecto celeste, se conserva y se valida', () => {
+  const d = setup();
+  assert.equal(d.profile.accent, 'blue');
+  const old = { ...d.profile }; delete old.accent;
+  assert.equal(Model.accentOf(old), 'blue');
+  d.profile = { ...d.profile, accent: 'green', theme: 'dark' };
+  const saved = Model.buildProfile({ name: 'Ema', displayName: '', currency: 'CRC', salaryFrequency: 'monthly' }, d.profile).profile;
+  assert.equal(saved.accent, 'green');
+  assert.equal(saved.theme, 'dark');
+  assert.ok(Model.buildProfile({ ...d.profile, accent: 'rosa' }, d.profile).errors.accent);
+  assert.ok(Model.validate({ ...d, profile: { ...d.profile, accent: 'rosa' } }).length > 0);
+});
 test('tema inválido se rechaza', () => {
   const d = setup();
   assert.ok(Model.buildProfile({ ...d.profile, theme: 'rosa' }, d.profile).errors.theme);

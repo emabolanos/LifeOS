@@ -4,7 +4,7 @@
  * reciente publicada; sin internet se usa la última copia guardada.
  * No toca los datos financieros (esos viven en localStorage).
  */
-const CACHE = 'lifeos-v6';
+const CACHE = 'lifeos-v7';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/styles.css',
   'js/money.js', 'js/dates.js', 'js/storage.js', 'js/icons.js', 'js/model.js', 'js/app.js',
