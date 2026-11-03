@@ -6,12 +6,12 @@
   color-scheme: light;
   /* Fondo blanco con luz de cielo celeste solo en la parte superior */
   --page: #ffffff;
-  --sky: linear-gradient(180deg, #d4ecfc 0px, #e9f5fe 160px, #f8fcff 340px, #ffffff 520px);
+  --sky: linear-gradient(180deg, #eef7fe 0px, #f8fcff 130px, #ffffff 260px);
   --glow-1: rgb(255 255 255 / 0.95);
-  --glow-2: rgb(150 210 250 / 0.22);
-  --glow-3: rgb(150 230 205 / 0.20);
+  --glow-2: rgb(150 210 250 / 0.08);
+  --glow-3: rgb(150 230 205 / 0.08);
   --bubble: rgb(90 170 235 / 0.28);
-  --bubble-in: rgb(200 230 252 / 0.18);
+  --bubble-in: rgb(205 232 252 / 0.22);
 
   --bg: #ffffff;                      /* menús, campos, diálogos */
   --card: #ffffff;                    /* tarjetas opacas: texto siempre nítido */
@@ -54,8 +54,8 @@
   --nav-on-border: #bfdcf4;
   --toast-bg: #13283b;
   --toast-text: #ffffff;
-  --glass: rgb(255 255 255 / 0.72);
-  --glass-page: rgb(244 250 255 / 0.78);
+  --glass: rgb(255 255 255 / 0.88);
+  --glass-page: rgb(255 255 255 / 0.84);
   --glass-border: rgb(150 195 230 / 0.35);
 
   --radius: 18px;
