@@ -36,9 +36,11 @@ tests/logic.test.js Pruebas de la lógica: node tests/logic.test.js
 manifest.webmanifest Datos para instalarla como app (nombre, íconos, colores)
 sw.js               Uso sin conexión (red primero, copia local como respaldo)
 icons/              Íconos de la app
+fonts/              Source Sans 3 (licencia SIL OFL 1.1, ver fonts/OFL.txt)
 ```
 
-Diseño: modo claro y oscuro automáticos según el sistema, barras translúcidas
+Diseño: estilo "Aero" (cielo celeste a blanco, tarjetas de vidrio y brillos suaves),
+modo claro y oscuro (cielo nocturno) automáticos según el sistema, barras translúcidas
 en el celular, título grande que se compacta al desplazarse y tamaños de letra
 en `rem`. En iPhone se respeta el tamaño de texto elegido en Ajustes.
 

@@ -1,50 +1,82 @@
 /* LifeOS — estilos
-   Capas de tono: página gris muy claro, tarjetas blancas con sombra suave,
-   gris oscuro para texto y verde como acento. */
+   Estilo "Aero": cielo celeste a blanco, tarjetas de vidrio, brillos suaves
+   y celeste como acento. Modo oscuro = cielo nocturno. */
 
 :root {
   color-scheme: light;
-  --page: #f3f4f1;          /* fondo de la página */
-  --bg: #ffffff;            /* tarjetas, menú, campos */
-  --surface: #f6f6f4;       /* elementos secundarios dentro de tarjetas */
-  --surface-2: #ecedea;
-  --border: #e1e2dd;
-  --card-border: #e8e9e4;
-  --border-strong: #d3d1cd;
-  --text: #2a2a29;
-  --text-muted: #6b6a67;
-  --accent: #1d6b4f;
-  --accent-hover: #155840;
-  --accent-soft: #e6f1eb;
-  --accent-strong: #1d6b4f;   /* fondo de botones (texto blanco encima) */
-  --positive: #1d6b4f;
-  --positive-soft: #e6f1eb;
-  --hero: #16382b;
-  --bar-neutral: #c4c2bd;
-  --bar-top: #3d3c3a;
-  --amber: #c98a12;
+  /* Cielo: fondo degradado celeste → blanco */
+  --page: #e4f2fc;
+  --sky: linear-gradient(180deg, #bfe3fa 0%, #d9effc 26%, #eef7fe 58%, #fbfdff 100%);
+  --glow-1: rgb(255 255 255 / 0.85);
+  --glow-2: rgb(140 210 255 / 0.35);
+  --glow-3: rgb(160 235 220 / 0.30);
+
+  --bg: #ffffff;                      /* menús, campos, diálogos */
+  --card: rgb(255 255 255 / 0.80);    /* tarjetas de vidrio */
+  --surface: #eef5fb;
+  --surface-2: #e1edf7;
+  --border: #cfdfec;
+  --card-border: rgb(255 255 255 / 0.95);
+  --border-strong: #adc8de;
+  --text: #13283b;
+  --text-muted: #51677b;
+
+  --accent: #0a6cb4;
+  --accent-hover: #095f9e;
+  --accent-soft: #dcefff;
+  --accent-strong: #0b6cb3;
+  --accent-gloss: linear-gradient(180deg, #2b93de 0%, #0d6fb8 52%, #0a5c9c 100%);
+  --btn2: linear-gradient(180deg, #ffffff 0%, #edf5fb 100%);
+  --positive: #0b7a57;
+  --positive-soft: #d9f2e8;
+  --ok: #17a078;
+  --hero: #0b5592;
+  --hero-gloss: linear-gradient(160deg, #1a7fcc 0%, #0b5592 55%, #083e6c 100%);
+  --hero-shadow: 0 12px 30px rgb(11 85 146 / 0.30);
+
+  --bar-neutral: #b7d0e4;
+  --bar-top: #1b4a74;
+  --amber: #d4930f;
   --negative: #b3261e;
-  --negative-soft: #fbeceb;
+  --negative-soft: #fdeceb;
   --danger-strong: #b3261e;
   --danger-hover: #962019;
-  --saving: #5a6472;
-  --saving-soft: #eceef1;
+  --saving: #4d6890;
+  --saving-soft: #e2eaf6;
   --warn: #8a5d00;
-  --warn-soft: #fbf3df;
-  --seg-bg: #e6e7e3;
-  --toast-bg: #2a2a29;
-  --toast-text: #ffffff;
-  --glass: rgb(255 255 255 / 0.72);       /* barras translúcidas */
-  --glass-page: rgb(243 244 241 / 0.78);
-  --glass-border: rgb(0 0 0 / 0.08);
+  --warn-soft: #fdf3dc;
 
-  --radius: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
-  --shadow-card: 0 1px 2px rgb(22 40 32 / 0.05), 0 2px 10px rgb(22 40 32 / 0.04);
-  --shadow-lg: 0 20px 50px rgb(0 0 0 / 0.16);
-  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
+  --seg-bg: rgb(255 255 255 / 0.55);
+  --toast-bg: #13283b;
+  --toast-text: #ffffff;
+  --glass: rgb(255 255 255 / 0.60);
+  --glass-page: rgb(222 240 252 / 0.72);
+  --glass-border: rgb(255 255 255 / 0.75);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 1px 2px rgb(20 70 120 / 0.06), 0 4px 16px rgb(20 70 120 / 0.06);
+  --shadow-card: 0 1px 1px rgb(20 70 120 / 0.04), 0 8px 24px rgb(20 70 120 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --shadow-lg: 0 24px 60px rgb(10 50 90 / 0.25);
+  --font: "Source Sans 3", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --sidebar: 236px;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("../fonts/source-sans-3-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("../fonts/source-sans-3-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -56,12 +88,12 @@ body {
   background: var(--page);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { margin: 0; line-height: 1.25; font-weight: 650; letter-spacing: -0.01em; }
+h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 650; letter-spacing: -0.005em; }
 p { margin: 0; }
 ul { margin: 0; padding: 0; list-style: none; }
 button, input, select { font: inherit; color: inherit; }
@@ -566,7 +598,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ne
 }
 
 @media (max-width: 560px) {
-  body { font-size: 0.9063rem; }
+  body { font-size: 0.96875rem; }
   .topbar .btn { padding: 0 12px; }
   .topbar .btn-label { display: none; }
   .topbar .btn::after { content: "Nuevo"; }
@@ -594,6 +626,67 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ne
 }
 
 /* ------------------------------------------------------------------ */
+/* Estilo Aero: cielo, vidrio y brillo                                 */
+/* ------------------------------------------------------------------ */
+
+/* Cielo fijo con halos de luz suaves detrás de todo */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(45vmax 35vmax at 88% -8%, var(--glow-1), transparent 62%),
+    radial-gradient(32vmax 32vmax at -6% 34%, var(--glow-2), transparent 66%),
+    radial-gradient(38vmax 30vmax at 104% 88%, var(--glow-3), transparent 66%),
+    var(--sky);
+}
+
+/* Tarjetas de vidrio */
+.card { background: var(--card); border-color: var(--card-border); }
+
+/* Menú lateral de vidrio (computadora) */
+.sidebar {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%);
+  border-right-color: var(--glass-border);
+}
+
+/* Saldo: vidrio azul profundo con reflejo */
+.hero {
+  background: var(--hero-gloss);
+  border-color: rgb(255 255 255 / 0.18);
+  box-shadow: var(--hero-shadow), inset 0 1px 0 rgb(255 255 255 / 0.35);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; left: -15%; right: -15%; top: -70%; height: 120%;
+  background: radial-gradient(ellipse at center, rgb(255 255 255 / 0.26), rgb(255 255 255 / 0) 68%);
+  pointer-events: none;
+}
+.hero > * { position: relative; }
+.hero--negative { background: linear-gradient(160deg, #8a2f28 0%, #5c1f1b 100%); }
+
+/* Botones brillantes */
+.btn-primary {
+  background: var(--accent-gloss);
+  border-color: rgb(0 50 100 / 0.25);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.38), 0 2px 8px rgb(11 108 179 / 0.28);
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.22);
+}
+.btn-primary:hover { background: var(--accent-gloss); filter: brightness(1.07); }
+.btn-secondary { background: var(--btn2); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6), 0 1px 2px rgb(20 70 120 / 0.08); }
+.btn-secondary:hover { background: var(--btn2); filter: brightness(1.03); }
+.brand-mark {
+  background: var(--accent-gloss);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), 0 2px 6px rgb(11 108 179 / 0.3);
+}
+
+/* Barras con brillo; estado "bien" en verde agua */
+.bar > span { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4); }
+.bar--ok > span { background: var(--ok); }
+
+/* Control Mensual/Quincenal de vidrio */
+.segmented { border: 1px solid var(--card-border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+
+/* ------------------------------------------------------------------ */
 /* Tamaño de letra del sistema (iPhone/iPad)                           */
 /* ------------------------------------------------------------------ */
 
@@ -612,45 +705,59 @@ input:not([type="radio"]):not([type="checkbox"]), select { font-size: max(16px, 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --page: #0e1210;
-    --bg: #171c19;
-    --surface: #1f2521;
-    --surface-2: #283029;
-    --border: #333b35;
-    --card-border: #252c27;
-    --border-strong: #47514a;
-    --text: #e7ebe8;
-    --text-muted: #9ba59f;
-    --accent: #5cc095;
-    --accent-strong: #237a56;
-    --accent-hover: #2a8a62;
-    --accent-soft: #1a3328;
-    --positive: #5cc095;
-    --positive-soft: #1a3328;
-    --hero: #143a2b;
-    --bar-neutral: #4a534d;
-    --bar-top: #d9dfdb;
-    --amber: #e2a93f;
-    --negative: #f07a72;
-    --negative-soft: #3a1e1c;
+    /* Cielo nocturno */
+    --page: #071527;
+    --sky: linear-gradient(180deg, #0f3256 0%, #0a223d 40%, #071527 100%);
+    --glow-1: rgb(70 150 230 / 0.22);
+    --glow-2: rgb(40 110 200 / 0.18);
+    --glow-3: rgb(40 160 150 / 0.12);
+
+    --bg: #10233a;
+    --card: rgb(17 38 63 / 0.78);
+    --surface: #17304d;
+    --surface-2: #1e3a5b;
+    --border: #284a70;
+    --card-border: rgb(130 190 250 / 0.14);
+    --border-strong: #37608b;
+    --text: #e6f1fb;
+    --text-muted: #9fb6cb;
+
+    --accent: #5cb8f5;
+    --accent-hover: #1a7fcc;
+    --accent-soft: #143a5e;
+    --accent-strong: #1670b8;
+    --accent-gloss: linear-gradient(180deg, #2a8fd8 0%, #136aae 55%, #0f5a95 100%);
+    --btn2: linear-gradient(180deg, #1c3758 0%, #152c48 100%);
+    --positive: #4fd1a5;
+    --positive-soft: #10392f;
+    --ok: #3bbf93;
+    --hero: #0d4478;
+    --hero-gloss: linear-gradient(160deg, #1a6db3 0%, #0d4478 60%, #0a3157 100%);
+    --hero-shadow: 0 12px 30px rgb(0 0 0 / 0.35);
+
+    --bar-neutral: #34557a;
+    --bar-top: #d6e8f7;
+    --amber: #e5ab3f;
+    --negative: #f27b73;
+    --negative-soft: #3b1f22;
     --danger-strong: #c4372f;
     --danger-hover: #d6463e;
-    --saving: #aab4c2;
-    --saving-soft: #252b33;
-    --warn: #e8b85a;
-    --warn-soft: #352b16;
-    --seg-bg: #232a25;
-    --toast-bg: #e7ebe8;
-    --toast-text: #121614;
-    --glass: rgb(23 28 25 / 0.72);
-    --glass-page: rgb(14 18 16 / 0.78);
-    --glass-border: rgb(255 255 255 / 0.08);
+    --saving: #a9bdd8;
+    --saving-soft: #1e3150;
+    --warn: #ebbd5f;
+    --warn-soft: #3a2f17;
+
+    --seg-bg: rgb(255 255 255 / 0.06);
+    --toast-bg: #e6f1fb;
+    --toast-text: #0a1a2b;
+    --glass: rgb(14 32 54 / 0.62);
+    --glass-page: rgb(9 26 46 / 0.72);
+    --glass-border: rgb(150 200 255 / 0.12);
+
     --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
-    --shadow-lg: 0 20px 50px rgb(0 0 0 / 0.6);
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.06);
+    --shadow-lg: 0 24px 60px rgb(0 0 0 / 0.6);
   }
-  .hero { box-shadow: none; border-color: #1f4a38; }
-  .hero--negative { background: #3d1a18; border-color: #5a2522; }
   .segmented button[aria-pressed="true"],
   .segmented input:checked + span { background: var(--surface-2); }
   .dialog::backdrop { background: rgb(0 0 0 / 0.6); }

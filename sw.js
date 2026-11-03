@@ -4,11 +4,12 @@
  * reciente publicada; sin internet se usa la última copia guardada.
  * No toca los datos financieros (esos viven en localStorage).
  */
-const CACHE = 'lifeos-v1';
+const CACHE = 'lifeos-v2';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/styles.css',
   'js/money.js', 'js/dates.js', 'js/storage.js', 'js/icons.js', 'js/model.js', 'js/app.js',
   'icons/icon-192.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png',
+  'fonts/source-sans-3-latin.woff2', 'fonts/source-sans-3-latin-ext.woff2',
 ];
 
 self.addEventListener('install', (event) => {
