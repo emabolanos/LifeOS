@@ -173,7 +173,36 @@
     $('#view-title').focus({ preventScroll: true });
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Tema: claro, oscuro o automático (según el sistema)                  */
+  /* ------------------------------------------------------------------ */
+
+  const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function applyTheme() {
+    const theme = state.data && state.data.profile ? Model.themeOf(state.data.profile) : 'light';
+    const dark = theme === 'dark' || (theme === 'auto' && !!darkQuery && darkQuery.matches);
+    document.documentElement.dataset.mode = dark ? 'dark' : 'light';
+    const meta = $('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#0f3256' : '#ffffff');
+  }
+
+  if (darkQuery) {
+    if (darkQuery.addEventListener) darkQuery.addEventListener('change', applyTheme);
+    else if (darkQuery.addListener) darkQuery.addListener(applyTheme); // Safari antiguo
+  }
+
+  function saveTheme(theme) {
+    if (!Model.THEMES.includes(theme) || Model.themeOf(profile()) === theme) return;
+    const labels = { light: 'Tema claro', dark: 'Tema oscuro', auto: 'Tema automático' };
+    if (commit((d) => { d.profile = { ...d.profile, theme }; }, `${labels[theme]} activado`)) {
+      const radio = $(`#theme-options input[value="${theme}"]`);
+      if (radio) radio.focus();
+    }
+  }
+
   function render() {
+    applyTheme();
     renderNav();
     const v = VIEWS.find((x) => x.id === state.view);
     $('#view-title').textContent = v.label;
@@ -589,6 +618,23 @@
           </form>
         </section>
 
+        <div class="profile-side">
+        <section class="card" aria-labelledby="h-theme">
+          <h3 id="h-theme">Apariencia</h3>
+          <fieldset class="field theme-options" id="theme-options">
+            <legend class="sr-only">Tema de la app</legend>
+            ${[
+              ['light', 'Claro', 'Fondo blanco con acentos celestes'],
+              ['dark', 'Oscuro', 'Cielo nocturno, ideal de noche'],
+              ['auto', 'Automático', 'Sigue el modo claro u oscuro de tu dispositivo'],
+            ].map(([value, label, desc]) => `
+            <label class="choice theme-choice">
+              <input type="radio" name="theme" value="${value}" ${Model.themeOf(p) === value ? 'checked' : ''}>
+              <span><i class="swatch swatch--${value}" aria-hidden="true"></i><span><strong>${label}</strong><small>${desc}</small></span></span>
+            </label>`).join('')}
+          </fieldset>
+        </section>
+
         <section class="card" aria-labelledby="h-data">
           <h3 id="h-data">Tus datos</h3>
           <p class="notice">${icon('lock')}<span>Tus datos se guardan <strong>solo en este navegador</strong>. No se envían a ningún servidor ni se sincronizan entre dispositivos. Exporta un respaldo de vez en cuando para no perderlos.</span></p>
@@ -602,6 +648,7 @@
           </div>
           ${d.legacy ? '<p class="hint">Se conservan datos de una versión anterior de LifeOS. No se usan, pero se incluyen en los respaldos exportados.</p>' : ''}
         </section>
+        </div>
       </div>`;
   }
 
@@ -937,6 +984,7 @@
       if (e.target.id === 'f-q') { state.filters.q = e.target.value; updateMovementList(); }
     });
     document.addEventListener('change', (e) => {
+      if (e.target.name === 'theme' && e.target.closest('#theme-options')) { saveTheme(e.target.value); return; }
       if (e.target.id === 'f-kind') { state.filters.kind = e.target.value; updateMovementList(); }
       if (e.target.id === 'f-cat') {
         state.filters.category = e.target.value;
@@ -1058,6 +1106,7 @@
     }
 
     state.data = loaded || Model.createEmpty();
+    applyTheme();
     if (state.data.profile) start(); else openOnboarding();
     if (warning) toast(warning, 'error');
   }

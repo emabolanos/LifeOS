@@ -3,7 +3,7 @@
    y celeste como acento. */
 
 :root {
-  color-scheme: only light;   /* siempre claro, aunque el sistema esté en modo oscuro */
+  color-scheme: only light;   /* tema claro: el navegador no lo oscurece por su cuenta */
   /* Fondo blanco puro; el celeste queda en acentos y burbujas */
   --page: #ffffff;
   --sky: #ffffff;
@@ -411,6 +411,24 @@ button, input, select { font: inherit; color: inherit; }
 .profile-grid { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 14px; align-items: start; }
 #profile-form { display: flex; flex-direction: column; gap: 14px; }
 #profile-form .btn { align-self: flex-start; }
+.profile-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* Apariencia: opciones de tema con muestra de color */
+.theme-options { gap: 8px; }
+.choice.theme-choice > span { flex-direction: row; align-items: center; gap: 12px; }
+.choice.theme-choice > span > span {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 0; border: 0; background: none; height: auto; font-weight: 400;
+}
+.theme-choice strong { font-weight: 600; }
+.swatch {
+  flex: none; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6), 0 1px 3px rgb(0 0 0 / 0.12);
+}
+.swatch--light { background: radial-gradient(circle at 70% 30%, #bfe3fa 0 22%, transparent 24%), #ffffff; }
+.swatch--dark { background: radial-gradient(circle at 70% 30%, #5cb8f5 0 18%, transparent 20%), linear-gradient(180deg, #0f3256, #071527); }
+.swatch--auto { background: linear-gradient(135deg, #ffffff 0 50%, #0f3256 50% 100%); }
 
 .notice {
   display: flex; gap: 10px; align-items: flex-start;
@@ -747,6 +765,72 @@ input:not([type="radio"]):not([type="checkbox"]), select { font-size: max(16px, 
 @media (prefers-reduced-transparency: reduce) {
   :root { --glass: var(--bg); --glass-page: var(--page); }
 }
+
+/* ------------------------------------------------------------------ */
+/* Tema oscuro (se elige en Mi perfil → Apariencia)                    */
+/* ------------------------------------------------------------------ */
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  /* Cielo nocturno */
+  --page: #071527;
+  --sky: linear-gradient(180deg, #0f3256 0%, #0a223d 40%, #071527 100%);
+  --glow-1: rgb(70 150 230 / 0.22);
+  --glow-2: rgb(40 110 200 / 0.18);
+  --glow-3: rgb(40 160 150 / 0.12);
+  --bubble: rgb(120 185 245 / 0.16);
+  --bubble-in: rgb(80 150 220 / 0.06);
+
+  --bg: #10233a;
+  --card: rgb(17 38 63 / 0.78);
+  --surface: #17304d;
+  --surface-2: #1e3a5b;
+  --border: #284a70;
+  --card-border: rgb(130 190 250 / 0.14);
+  --border-strong: #37608b;
+  --text: #e6f1fb;
+  --text-muted: #9fb6cb;
+
+  --accent: #5cb8f5;
+  --accent-hover: #1a7fcc;
+  --accent-soft: #143a5e;
+  --accent-strong: #1670b8;
+  --accent-gloss: linear-gradient(180deg, #2a8fd8 0%, #136aae 55%, #0f5a95 100%);
+  --btn2: linear-gradient(180deg, #1c3758 0%, #152c48 100%);
+  --positive: #4fd1a5;
+  --positive-soft: #10392f;
+  --ok: #3bbf93;
+  --hero: #0d4478;
+  --hero-gloss: linear-gradient(160deg, #1a6db3 0%, #0d4478 60%, #0a3157 100%);
+  --hero-shadow: 0 12px 30px rgb(0 0 0 / 0.35);
+
+  --bar-neutral: #34557a;
+  --bar-top: #d6e8f7;
+  --amber: #e5ab3f;
+  --negative: #f27b73;
+  --negative-soft: #3b1f22;
+  --danger-strong: #c4372f;
+  --danger-hover: #d6463e;
+  --saving: #a9bdd8;
+  --saving-soft: #1e3150;
+  --warn: #ebbd5f;
+  --warn-soft: #3a2f17;
+
+  --seg-bg: rgb(255 255 255 / 0.06);
+  --seg-on: linear-gradient(180deg, #24466c 0%, #1b385a 100%);
+  --nav-on: linear-gradient(180deg, #1a446c 0%, #143a5e 100%);
+  --nav-on-border: rgb(120 190 250 / 0.25);
+  --toast-bg: #e6f1fb;
+  --toast-text: #0a1a2b;
+  --glass: rgb(14 32 54 / 0.62);
+  --glass-page: rgb(9 26 46 / 0.72);
+  --glass-border: rgb(150 200 255 / 0.12);
+
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --shadow-lg: 0 24px 60px rgb(0 0 0 / 0.6);
+}
+[data-mode="dark"] .dialog::backdrop { background: rgb(0 0 0 / 0.6); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -6,7 +6,8 @@
  * {
  *   version: 1,
  *   profile: { name, displayName, currency: 'CRC'|'USD',
- *              salaryFrequency: 'monthly'|'biweekly', exchangeRate: int|null } | null,
+ *              salaryFrequency: 'monthly'|'biweekly', exchangeRate: int|null,
+ *              theme?: 'light'|'dark'|'auto' (sin valor = 'light') } | null,
  *   categories: [{ id, name, icon (clave de icons.js), type: 'fixed'|'variable',
  *                  budget: { amount: int, currency } | null }],
  *   movements: [{ id, kind: 'income'|'expense'|'saving', amount: int, currency,
@@ -27,6 +28,7 @@
   const SCHEMA_VERSION = 1;
   const KINDS = ['income', 'expense', 'saving'];
   const FREQUENCIES = ['monthly', 'biweekly'];
+  const THEMES = ['light', 'dark', 'auto'];
   const CATEGORY_TYPES = ['fixed', 'variable'];
   const INCOME_TYPES = ['salary', 'other'];
 
@@ -100,6 +102,7 @@
         if (!isCurrency(p.currency)) err('La moneda principal del perfil no es válida.');
         if (!FREQUENCIES.includes(p.salaryFrequency)) err('La frecuencia salarial no es válida.');
         if (p.exchangeRate !== null && !isPositiveInt(p.exchangeRate)) err('El tipo de cambio del perfil no es válido.');
+        if (p.theme !== undefined && !THEMES.includes(p.theme)) err('El tema del perfil no es válido.');
       }
     }
 
@@ -160,7 +163,12 @@
     return { rate };
   }
 
-  /** draft: { name, displayName, currency, salaryFrequency, rateText? } */
+  /** Tema guardado en el perfil; los perfiles antiguos sin tema usan "light". */
+  function themeOf(profile) {
+    return profile && THEMES.includes(profile.theme) ? profile.theme : 'light';
+  }
+
+  /** draft: { name, displayName, currency, salaryFrequency, rateText?, theme? } */
   function buildProfile(draft, existing) {
     const errors = {};
     const name = clean(draft.name);
@@ -178,10 +186,13 @@
       else exchangeRate = r.rate;
     }
 
+    const theme = draft.theme !== undefined ? draft.theme : themeOf(existing);
+    if (!THEMES.includes(theme)) errors.theme = 'Elige un tema.';
+
     if (Object.keys(errors).length) return { errors };
     return {
       errors: null,
-      profile: { name, displayName, currency: draft.currency, salaryFrequency: draft.salaryFrequency, exchangeRate },
+      profile: { name, displayName, currency: draft.currency, salaryFrequency: draft.salaryFrequency, exchangeRate, theme },
     };
   }
 
@@ -383,7 +394,7 @@
   }
 
   L.Model = {
-    SCHEMA_VERSION, KINDS, uid, createEmpty, defaultCategories, migrate, validate,
+    SCHEMA_VERSION, KINDS, THEMES, themeOf, uid, createEmpty, defaultCategories, migrate, validate,
     buildProfile, buildCategory, countCategoryUsage, deleteCategory, categoryById,
     buildMovement, upsertMovement, deleteMovement, sortMovements,
     valueInMain, movementsInPeriod, summarize, budgetForPeriod,

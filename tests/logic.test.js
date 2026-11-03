@@ -174,6 +174,23 @@ test('eliminar categoría reasigna o deja sin categoría, sin perder gastos', ()
   assert.deepEqual(Model.validate(d), []);
 });
 
+console.log('Perfil y tema');
+test('tema por defecto claro y se conserva al guardar el perfil', () => {
+  const d = setup();
+  assert.equal(d.profile.theme, 'light');
+  const old = { ...d.profile }; delete old.theme; // perfil de una versión anterior
+  assert.equal(Model.themeOf(old), 'light');
+  d.profile = { ...d.profile, theme: 'dark' };
+  const saved = Model.buildProfile({ name: 'Ema', displayName: '', currency: 'CRC', salaryFrequency: 'monthly', rateText: '500' }, d.profile).profile;
+  assert.equal(saved.theme, 'dark');
+  assert.deepEqual(Model.validate({ ...d, profile: saved }), []);
+});
+test('tema inválido se rechaza', () => {
+  const d = setup();
+  assert.ok(Model.buildProfile({ ...d.profile, theme: 'rosa' }, d.profile).errors.theme);
+  assert.ok(Model.validate({ ...d, profile: { ...d.profile, theme: 'rosa' } }).length > 0);
+});
+
 console.log('Respaldos');
 test('exportar e importar conserva los datos', () => {
   const d = setup();

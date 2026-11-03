@@ -4,7 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
-  <meta name="color-scheme" content="only light">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    /* Aplica el tema guardado antes de pintar la página (evita un destello blanco en tema oscuro). */
+    (function () {
+      try {
+        var p = (JSON.parse(localStorage.getItem('lifeos.data')) || {}).profile || {};
+        var t = p.theme || 'light';
+        var dark = t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-mode', dark ? 'dark' : 'light');
+        if (dark) document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f3256');
+      } catch (e) { /* sin datos: tema claro */ }
+    })();
+  </script>
   <meta name="description" content="LifeOS: control sencillo de tus finanzas personales.">
   <!-- Modo app al agregarla a la pantalla de inicio -->
   <meta name="mobile-web-app-capable" content="yes">
