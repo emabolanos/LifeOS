@@ -1009,9 +1009,31 @@
     render();
   }
 
+  /** Título grande que se compacta al desplazarse (con margen para evitar parpadeos). */
+  function bindScrollTitle() {
+    let compact = false;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      const next = compact ? y > 4 : y > 24;
+      if (next !== compact) {
+        compact = next;
+        document.documentElement.classList.toggle('is-scrolled', compact);
+      }
+    }, { passive: true });
+  }
+
+  /** Permite abrir la app sin conexión (solo cuando se sirve por http/https). */
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* sin modo offline */ });
+    }
+  }
+
   function init() {
     hydrateIcons();
     bindEvents();
+    bindScrollTitle();
+    registerServiceWorker();
 
     const { data, error } = Storage.load();
     if (error === 'unavailable') {

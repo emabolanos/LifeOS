@@ -10,6 +10,18 @@ Abre `index.html` con doble clic en Chrome, Edge o Firefox. No hace falta instal
 > Los datos quedan en el navegador y en la ruta desde donde se abre el archivo.
 > Si cambias de navegador o de equipo, usa **Mi perfil → Exportar / Importar respaldo**.
 
+### Instalarla como app en el celular
+
+Versión publicada: https://emabolanos.github.io/LifeOS/
+
+- **iPhone (Safari):** Compartir → *Agregar a inicio*.
+- **Android (Chrome):** menú ⋮ → *Instalar app* o *Agregar a pantalla principal*.
+
+Se abre a pantalla completa, con su propio ícono, y funciona sin conexión.
+
+> **iPhone:** la app instalada guarda sus datos aparte de Safari. Si ya registraste
+> datos en Safari, expórtalos desde Safari e impórtalos dentro de la app instalada.
+
 ## Estructura
 
 ```
@@ -21,7 +33,14 @@ js/storage.js       Única capa que toca localStorage (reemplazable por otro ser
 js/model.js         Estructura de datos, validación, migración y cálculos
 js/app.js           Interfaz: vistas, formularios, diálogos y eventos
 tests/logic.test.js Pruebas de la lógica: node tests/logic.test.js
+manifest.webmanifest Datos para instalarla como app (nombre, íconos, colores)
+sw.js               Uso sin conexión (red primero, copia local como respaldo)
+icons/              Íconos de la app
 ```
+
+Diseño: modo claro y oscuro automáticos según el sistema, barras translúcidas
+en el celular, título grande que se compacta al desplazarse y tamaños de letra
+en `rem`. En iPhone se respeta el tamaño de texto elegido en Ajustes.
 
 ## Reglas principales
 
