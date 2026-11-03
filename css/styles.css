@@ -4,20 +4,22 @@
 
 :root {
   color-scheme: light;
-  /* Cielo: fondo degradado celeste → blanco */
-  --page: #e4f2fc;
-  --sky: linear-gradient(180deg, #bfe3fa 0%, #d9effc 26%, #eef7fe 58%, #fbfdff 100%);
-  --glow-1: rgb(255 255 255 / 0.85);
-  --glow-2: rgb(140 210 255 / 0.35);
-  --glow-3: rgb(160 235 220 / 0.30);
+  /* Fondo blanco con luz de cielo celeste solo en la parte superior */
+  --page: #ffffff;
+  --sky: linear-gradient(180deg, #d4ecfc 0px, #e9f5fe 160px, #f8fcff 340px, #ffffff 520px);
+  --glow-1: rgb(255 255 255 / 0.95);
+  --glow-2: rgb(150 210 250 / 0.22);
+  --glow-3: rgb(150 230 205 / 0.20);
+  --bubble: rgb(90 170 235 / 0.28);
+  --bubble-in: rgb(200 230 252 / 0.18);
 
   --bg: #ffffff;                      /* menús, campos, diálogos */
-  --card: rgb(255 255 255 / 0.80);    /* tarjetas de vidrio */
-  --surface: #eef5fb;
-  --surface-2: #e1edf7;
-  --border: #cfdfec;
-  --card-border: rgb(255 255 255 / 0.95);
-  --border-strong: #adc8de;
+  --card: #ffffff;                    /* tarjetas opacas: texto siempre nítido */
+  --surface: #f1f7fc;
+  --surface-2: #e3eff9;
+  --border: #d0e2f0;
+  --card-border: #d9eaf7;             /* borde celeste fino */
+  --border-strong: #a9c8e0;
   --text: #13283b;
   --text-muted: #51677b;
 
@@ -46,17 +48,20 @@
   --warn: #8a5d00;
   --warn-soft: #fdf3dc;
 
-  --seg-bg: rgb(255 255 255 / 0.55);
+  --seg-bg: #e8f2fa;
+  --seg-on: linear-gradient(180deg, #ffffff 0%, #eef6fc 100%);
+  --nav-on: linear-gradient(180deg, #eef8ff 0%, #d6ecfd 100%);
+  --nav-on-border: #bfdcf4;
   --toast-bg: #13283b;
   --toast-text: #ffffff;
-  --glass: rgb(255 255 255 / 0.60);
-  --glass-page: rgb(222 240 252 / 0.72);
-  --glass-border: rgb(255 255 255 / 0.75);
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-page: rgb(244 250 255 / 0.78);
+  --glass-border: rgb(150 195 230 / 0.35);
 
   --radius: 18px;
   --radius-sm: 12px;
   --shadow: 0 1px 2px rgb(20 70 120 / 0.06), 0 4px 16px rgb(20 70 120 / 0.06);
-  --shadow-card: 0 1px 1px rgb(20 70 120 / 0.04), 0 8px 24px rgb(20 70 120 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --shadow-card: 0 1px 2px rgb(30 110 180 / 0.06), 0 8px 24px rgb(30 110 180 / 0.09), inset 0 1px 0 #ffffff;
   --shadow-lg: 0 24px 60px rgb(10 50 90 / 0.25);
   --font: "Source Sans 3", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --sidebar: 236px;
@@ -93,7 +98,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 650; letter-spacing: -0.005em; }
+h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 600; letter-spacing: 0; }
 p { margin: 0; }
 ul { margin: 0; padding: 0; list-style: none; }
 button, input, select { font: inherit; color: inherit; }
@@ -633,6 +638,11 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ne
 body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
+    radial-gradient(circle 14px at calc(72% - 12px) calc(15% - 14px), rgb(255 255 255 / 0.7), transparent 100%),
+    radial-gradient(circle 46px at 72% 15%, var(--bubble-in) 0%, var(--bubble-in) 62%, var(--bubble) 90%, transparent 100%),
+    radial-gradient(circle 7px at calc(66% - 5px) calc(22% - 6px), rgb(255 255 255 / 0.7), transparent 100%),
+    radial-gradient(circle 20px at 66% 22%, var(--bubble-in) 0%, var(--bubble-in) 60%, var(--bubble) 90%, transparent 100%),
+    radial-gradient(circle 30px at 4% 70%, var(--bubble-in) 0%, var(--bubble-in) 62%, var(--bubble) 90%, transparent 100%),
     radial-gradient(45vmax 35vmax at 88% -8%, var(--glow-1), transparent 62%),
     radial-gradient(32vmax 32vmax at -6% 34%, var(--glow-2), transparent 66%),
     radial-gradient(38vmax 30vmax at 104% 88%, var(--glow-3), transparent 66%),
@@ -682,9 +692,44 @@ body::before {
 /* Barras con brillo; estado "bien" en verde agua */
 .bar > span { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4); }
 .bar--ok > span { background: var(--ok); }
+.bar > span { background-image: linear-gradient(180deg, rgb(255 255 255 / 0.45), rgb(255 255 255 / 0) 60%); }
 
-/* Control Mensual/Quincenal de vidrio */
-.segmented { border: 1px solid var(--card-border); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+/* Control Mensual/Quincenal: pastilla brillante */
+.segmented { border: 1px solid var(--card-border); }
+.segmented button[aria-pressed="true"],
+.segmented input:checked + span {
+  background: var(--seg-on);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 3px rgb(30 110 180 / 0.18);
+  color: var(--text);
+}
+
+/* Menú activo: pastilla celeste brillante */
+.nav-item[aria-current="page"] {
+  background: var(--nav-on);
+  box-shadow: inset 0 0 0 1px var(--nav-on-border), inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+/* Íconos de resumen como esferas brillantes */
+.stat-icon {
+  border-radius: 50%; color: #fff;
+  box-shadow: inset 0 -3px 6px rgb(0 0 0 / 0.12), 0 3px 8px rgb(30 110 180 / 0.20);
+  position: relative; overflow: hidden;
+}
+.stat-icon::after {
+  content: ""; position: absolute; left: 18%; right: 18%; top: 6%; height: 42%;
+  border-radius: 50%; background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0));
+}
+.stat-icon .icon { position: relative; z-index: 1; stroke-width: 2.2; }
+.stat-icon--income { background: linear-gradient(180deg, #5fdcb1 0%, #10a074 100%); color: #fff; }
+.stat-icon--expense { background: linear-gradient(180deg, #8db6da 0%, #3c6d99 100%); color: #fff; }
+.stat-icon--saving { background: linear-gradient(180deg, #8fd0ff 0%, #2585d4 100%); color: #fff; }
+
+/* Íconos de categorías con brillo de vidrio */
+.cat-icon, .mv-badge, .dist-icon {
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.65), rgb(255 255 255 / 0) 60%);
+  box-shadow: inset 0 0 0 1px var(--card-border);
+}
+
 
 /* ------------------------------------------------------------------ */
 /* Tamaño de letra del sistema (iPhone/iPad)                           */
@@ -711,6 +756,8 @@ input:not([type="radio"]):not([type="checkbox"]), select { font-size: max(16px, 
     --glow-1: rgb(70 150 230 / 0.22);
     --glow-2: rgb(40 110 200 / 0.18);
     --glow-3: rgb(40 160 150 / 0.12);
+    --bubble: rgb(120 185 245 / 0.16);
+    --bubble-in: rgb(80 150 220 / 0.06);
 
     --bg: #10233a;
     --card: rgb(17 38 63 / 0.78);
@@ -748,6 +795,9 @@ input:not([type="radio"]):not([type="checkbox"]), select { font-size: max(16px, 
     --warn-soft: #3a2f17;
 
     --seg-bg: rgb(255 255 255 / 0.06);
+    --seg-on: linear-gradient(180deg, #24466c 0%, #1b385a 100%);
+    --nav-on: linear-gradient(180deg, #1a446c 0%, #143a5e 100%);
+    --nav-on-border: rgb(120 190 250 / 0.25);
     --toast-bg: #e6f1fb;
     --toast-text: #0a1a2b;
     --glass: rgb(14 32 54 / 0.62);
